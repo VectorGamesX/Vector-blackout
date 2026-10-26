@@ -1,6 +1,6 @@
 'use strict';
 /* Authoritative room simulation: players + bots, weapons, abilities, pickups, modes, per-recipient fog-of-war snapshots. */
-const VB=require('./game js/shared.js');
+const VB=require('./public/js/shared.js');
 const CFG=require('./config');
 const Bots=require('./bots');
 const {TS,DT}=VB;
