@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#05080f">
+<title>VECTOR: BLACKOUT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>body{background:#05080f}#game{display:none}#boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;color:#cfe;font:18px/1.5 system-ui,sans-serif;z-index:99;background:#05080f}</style>
+</head>
+<body>
+<div id="boot">Loading VECTOR: BLACKOUT…<br>If this stays here, the game files did not load. Open the game from its server address (for example https://your-game.onrender.com), not by double-clicking the file.</div>
+<canvas id="bg"></canvas>
+<canvas id="game"></canvas>
+
+<!-- splash -->
+<section id="splash" class="screen on">
+  <div class="logo-wrap"><div class="vgx" id="vgx">VECTORGAMEX</div><div class="vgx-sub">PRESENTS</div></div>
+  <button id="enter" class="btn big pulse">TAP TO ENTER</button><div id="sstat" style="color:#8a9bb8;letter-spacing:.1em;min-height:22px;text-align:center;padding:0 16px"></div>
+</section>
+
+<!-- main menu -->
+<section id="menu" class="screen">
+  <div class="menu-grid">
+    <div class="brandcol">
+      <div class="studio" id="mStudio">VECTORGAMEX</div>
+      <h1 id="mTitle">VECTOR: BLACKOUT</h1>
+      <p class="tag" id="mTag"></p>
+      <div class="motd" id="mMotd"></div>
+      <div class="admin-banner" id="mBanner" hidden></div>
+      <div class="online"><span class="dot" id="mDot"></span><span id="mOnline">connecting…</span></div>
+    </div>
+    <div class="panel">
+      <label class="lbl">CALLSIGN</label>
+      <input id="mName" maxlength="16" autocomplete="off" spellcheck="false" placeholder="Your callsign">
+      <label class="lbl">CLASS</label>
+      <div id="mClasses" class="cards"></div>
+      <label class="lbl">MODE</label>
+      <div id="mModes" class="pills"></div>
+      <label class="lbl">MAP <span class="hint">(quick play picks the live rotation)</span></label>
+      <div id="mMaps" class="pills small"></div>
+      <div class="row">
+        <button id="bQuick" class="btn big">QUICK PLAY</button>
+        <button id="bCreate" class="btn ghost">PRIVATE ROOM</button>
+      </div>
+      <div class="row join">
+        <input id="mCode" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false">
+        <button id="bJoin" class="btn ghost">JOIN CODE</button>
+        <button id="bSet" class="btn ghost icon" title="Settings">⚙</button>
+        <button id="bHow" class="btn ghost icon" title="How to play">?</button>
+      </div>
+    </div>
+  </div>
+  <div class="foot">© VectorGamex · Voice chat needs a microphone (HTTPS) · v1.0</div>
+</section>
+
+<!-- in-game HUD -->
+<section id="hud" class="screen">
+  <div id="hudTop"><div class="sc a"><b id="scA">0</b><i id="nmA"></i></div><div class="clock"><span id="hMode"></span><b id="hTime">0:00</b><small id="hRoom"></small></div><div class="sc b"><b id="scB">0</b><i id="nmB"></i></div></div>
+  <canvas id="mini"></canvas>
+  <div id="killfeed"></div>
+  <div id="voiceList"></div>
+  <div id="chatLog"></div>
+  <input id="chatIn" maxlength="160" placeholder="Say something… (/t for team)" hidden autocomplete="off">
+  <div id="bars"><div class="bar hp"><i id="hpF"></i><span id="hpT">100</span></div><div class="bar ar"><i id="arF"></i><span id="arT">0</span></div><div class="cls" id="hCls"></div></div>
+  <div id="wpn"><div class="wn" id="wName"></div><div class="am"><b id="wAm">0</b><small id="wMag"></small></div><div class="rlbar"><i id="rlF"></i></div></div>
+  <div id="abil"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" class="bgc"/><circle id="abArc" cx="22" cy="22" r="19" class="fgc"/></svg><span id="abName">—</span><small>SPACE</small></div>
+  <div id="centerMsg"></div>
+  <div id="toast"></div>
+  <div id="dead" hidden><div class="dtitle">ELIMINATED</div><div id="dBy"></div><div id="dCount"></div><div id="dCls" class="pills small"></div></div>
+  <div id="board" hidden></div>
+  <div id="endScreen" hidden></div>
+  <div id="pauseBtns">
+    <button id="bMic" class="roundbtn" title="Join voice chat">🎤</button>
+    <button id="bPause" class="roundbtn" title="Menu">☰</button>
+  </div>
+  <div id="pingTag"></div>
+  <!-- touch controls -->
+  <div id="touch">
+    <div class="stick l" id="stL"><i></i></div><div class="stick r" id="stR"><i></i></div>
+    <button class="tbtn" id="tAb">ABILITY</button><button class="tbtn" id="tRl">RELOAD</button><button class="tbtn" id="tSb">TAB</button><button class="tbtn" id="tMic">HOLD<br>TALK</button>
+  </div>
+</section>
+
+<!-- pause / settings / how-to -->
+<section id="pause" class="modal" hidden>
+  <div class="mbox">
+    <h2>PAUSED</h2>
+    <div id="pauseCls" class="pills small"></div>
+    <p class="hint">Class changes apply on your next respawn.</p>
+    <div class="row"><button id="pResume" class="btn">RESUME</button><button id="pSet" class="btn ghost">SETTINGS</button><button id="pLeave" class="btn ghost danger">LEAVE MATCH</button></div>
+  </div>
+</section>
+<section id="settings" class="modal" hidden>
+  <div class="mbox">
+    <h2>SETTINGS</h2>
+    <label class="sl">Music <input type="range" id="sMusic" min="0" max="1" step=".05"></label>
+    <label class="sl">Sound effects <input type="range" id="sSfx" min="0" max="1" step=".05"></label>
+    <label class="sl">Voice volume <input type="range" id="sVoice" min="0" max="1" step=".05"></label>
+    <label class="chk"><input type="checkbox" id="sOpen"> Open mic (otherwise hold <b>V</b> to talk)</label>
+    <div id="vStatus" class="hint"></div>
+    <div class="row"><button id="sVoiceBtn" class="btn ghost">JOIN VOICE</button><button id="sClose" class="btn">DONE</button></div>
+  </div>
+</section>
+<section id="how" class="modal" hidden>
+  <div class="mbox wide">
+    <h2>HOW TO PLAY</h2>
+    <p id="howRules"></p>
+    <div class="keys">
+      <div><b>WASD</b> move</div><div><b>MOUSE</b> aim · <b>CLICK</b> fire</div><div><b>SPACE</b> ability</div><div><b>R</b> reload</div>
+      <div><b>TAB</b> scoreboard</div><div><b>V</b> push-to-talk</div><div><b>ENTER</b> chat (<b>/t</b> team)</div><div><b>ESC</b> menu</div>
+    </div>
+    <p class="hint">Touch: left stick moves, right stick aims and fires. Pickups: <span style="color:#ff4d6d">+ health</span>, <span style="color:#19e6ff">◆ armor</span>, <span style="color:#ffd166">W weapon</span>, <span style="color:#c9a7ff">⚡ ability reset</span>.</p>
+    <button id="hClose" class="btn">GOT IT</button>
+  </div>
+</section>
+<div id="rotate">Rotate your phone to landscape for the best view</div>
+
+<script src="js/shared.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/voice.js"></script>
+<script src="js/core.js"></script>
+<script src="js/render.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
